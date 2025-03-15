@@ -26,9 +26,9 @@ void OnTick() {
 }
 
 void openLogic() {
-    int currentMinutes = getCurrentMinutes();
+    MqlDateTime curTime = getCurrentTime();
 
-    if (currentMinutes != 0) {
+    if (!(curTime.hour == 17 && curTime.min == 0)) {
         return;
     }
 
@@ -45,26 +45,26 @@ void openLogic() {
 }
 
 void closeLogic() {
-    int currentMinutes = getCurrentMinutes();
+    MqlDateTime curTime = getCurrentTime();
 
-    if (currentMinutes != 5) {
+    if (!(curTime.hour == 21 && curTime.min == 0)) {
         return;
     }
 
     Trade::closeCurrentPosition();
 }
 
-int getCurrentMinutes() {
+MqlDateTime getCurrentTime() {
     datetime currentCandleTime = iTime(Symbol(), PERIOD_M5, 0);
 
     MqlDateTime dateTimeStruct = {};
 
     if (!TimeToStruct(currentCandleTime, dateTimeStruct)) {
         Logger::printLastError(__FUNCSIG__, __LINE__);
-        return -1;
+        return dateTimeStruct;
     }
 
-    return dateTimeStruct.min;
+    return dateTimeStruct;
 }
 
 }
